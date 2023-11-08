@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 
 public class Game extends Canvas implements Runnable, KeyListener {
 	
-	public static final int WIDTH = 640;
+	public static final int WIDTH = 480;
 	
 	public static final int HEIGHT = 480;
 	
@@ -25,6 +25,8 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	public int appleX = 0;
 	
 	public int appleY = 0;
+	
+	public int speed = 0;
 	
 	public Game() {
 		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -42,21 +44,21 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		}
 		
 		if (right) {
-			nodeSnake[0].x++;
+			nodeSnake[0].x+=speed;
 		} else if (up) {
-			nodeSnake[0].y--;
+			nodeSnake[0].y-=speed;
 		} else if (down) {
-			nodeSnake[0].y++;
+			nodeSnake[0].y+=speed;
 		} else if (left) {
-			nodeSnake[0].x--;
+			nodeSnake[0].x-=speed;
 		}
 		
 		if (new Rectangle(nodeSnake[0].x, nodeSnake[0].y, 10, 10).intersects(new Rectangle(
 				appleX, appleY, 10, 10))) {
-			appleX = new Random().nextInt(640-10);
-			appleY = new Random().nextInt(640-10);
+			appleX = new Random().nextInt(WIDTH-10);
+			appleY = new Random().nextInt(WIDTH-10);
 			score++;
-			
+			speed++;
 			System.out.println("Score: " + score);
 		}
 		
