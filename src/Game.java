@@ -2,11 +2,13 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
 
-public class Game extends Canvas implements Runnable {
+public class Game extends Canvas implements Runnable, KeyListener {
 	
 	public static final int WIDTH = 640;
 	
@@ -14,15 +16,20 @@ public class Game extends Canvas implements Runnable {
 	
 	public Node[] nodeSnake = new Node[10]; // Tamanho da cobrinha
 	
+	public boolean left, right, up, down;
+	
 	public Game() {
 		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		for (int i = 0; i < nodeSnake.length; i++) {
 			nodeSnake[i] = new Node(0, 0);
 		}
+		this.addKeyListener(this);
 	}
 
 	private void tick() {
-		
+		if (right) {
+			nodeSnake[0].x++;
+		}
 	}
 	
 	private void render() {
@@ -70,6 +77,43 @@ public class Game extends Canvas implements Runnable {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			right = true;
+			left = false;
+			up = false;
+			down = false;
+		} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+			left = true;
+			right = false;
+			up = false;
+			down = false;
+		} else if (e.getKeyCode() == KeyEvent.VK_UP) {
+			up = true;
+			right = false;
+			left = false;
+			down = false;
+		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			down = true;
+			up = false;
+			right = false;
+			left = false;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
