@@ -12,12 +12,16 @@ public class Game extends Canvas implements Runnable {
 	
 	public static final int HEIGHT = 480;
 	
+	public Node[] nodeSnake = new Node[10]; // Tamanho da cobrinha
+	
 	public Game() {
 		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+		for (int i = 0; i < nodeSnake.length; i++) {
+			nodeSnake[i] = new Node(0, 0);
+		}
 	}
 
 	private void tick() {
-		// TODO Auto-generated method stub
 		
 	}
 	
@@ -30,6 +34,11 @@ public class Game extends Canvas implements Runnable {
 		Graphics graphics = bs.getDrawGraphics(); // Classe responsável por desenhar o jogo
 		graphics.setColor(Color.black);
 		graphics.fillRect(0, 0, WIDTH, HEIGHT);
+		
+		for (int i = 0; i < nodeSnake.length; i++) {
+			graphics.setColor(Color.magenta);
+			graphics.fillRect(nodeSnake[i].x, nodeSnake[i].y, 10, 10);
+		}
 		
 		graphics.dispose(); 
 		bs.show();
