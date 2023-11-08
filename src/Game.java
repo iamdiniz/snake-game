@@ -27,8 +27,20 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	}
 
 	private void tick() {
+		
+		for (int i = nodeSnake.length - 1; i > 0; i--) { // É aqui que ela persegue
+			nodeSnake[i].x = nodeSnake[i - 1].x;
+			nodeSnake[i].y = nodeSnake[i - 1].y;
+		}
+		
 		if (right) {
 			nodeSnake[0].x++;
+		} else if (up) {
+			nodeSnake[0].y--;
+		} else if (down) {
+			nodeSnake[0].y++;
+		} else if (left) {
+			nodeSnake[0].x--;
 		}
 	}
 	
