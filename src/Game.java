@@ -16,17 +16,19 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	
 	public static final int HEIGHT = 480;
 	
-	public Node[] nodeSnake = new Node[20]; // Tamanho da cobrinha
+	public Node[] nodeSnake = new Node[10]; // Tamanho da cobrinha
 	
-	public boolean left, right, up, down;
+	public boolean left = false, right = false, up = false, down = false;
 	
 	public int score = 0;
 	
-	public int appleX = 0;
+	public int appleX = new Random().nextInt(WIDTH-10);
 	
-	public int appleY = 0;
+	public int appleY = new Random().nextInt(WIDTH-10);
 	
-	public int speed = 0;
+	public int speed = 10;
+	
+	public int frameSpeed = 20;
 	
 	public Game() {
 		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -45,12 +47,16 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		
 		if (right) {
 			nodeSnake[0].x+=speed;
+			collision();
 		} else if (up) {
 			nodeSnake[0].y-=speed;
+			collision();
 		} else if (down) {
 			nodeSnake[0].y+=speed;
+			collision();
 		} else if (left) {
 			nodeSnake[0].x-=speed;
+			collision();
 		}
 		
 		if (new Rectangle(nodeSnake[0].x, nodeSnake[0].y, 10, 10).intersects(new Rectangle(
@@ -58,12 +64,35 @@ public class Game extends Canvas implements Runnable, KeyListener {
 			appleX = new Random().nextInt(WIDTH-10);
 			appleY = new Random().nextInt(WIDTH-10);
 			score++;
-			speed++;
+			frameSpeed++;
 			System.out.println("Score: " + score);
 		}
 		
 	}
 	
+	private void collision() {
+		for (int i = 0; i < nodeSnake.length; i++) {
+			if (i == 0) {
+				continue;
+			}
+			Rectangle box1 = new Rectangle(nodeSnake[0].x, nodeSnake[0].y, 10, 10);
+			Rectangle box2 = new Rectangle(nodeSnake[i].x, nodeSnake[i].y, 10, 10);
+			
+			if (box1.intersects(box2)) {
+				System.out.println("Game Over!");
+				frameSpeed = 20;
+				score = 0;
+				right = false;
+				up = false;
+				left = false;
+				down = false;
+				for (int j = 0; j < nodeSnake.length; j++) {
+					nodeSnake[j] = new Node(0, 0);
+				}
+			}
+		}
+	}
+
 	private void render() {
 		BufferStrategy bs = this.getBufferStrategy(); // Definir estrategia de buffer
 		if (bs == null) {
@@ -107,7 +136,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 			tick();
 			render();
 			try {
-				Thread.sleep(1000/60);
+				Thread.sleep(1000/frameSpeed);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
