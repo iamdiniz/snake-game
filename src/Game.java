@@ -13,21 +13,15 @@ import javax.swing.JFrame;
 public class Game extends Canvas implements Runnable, KeyListener {
 	
 	public static final int WIDTH = 480;
-	
 	public static final int HEIGHT = 480;
 	
 	public Node[] nodeSnake = new Node[10]; // Tamanho da cobrinha
 	
 	public boolean left = false, right = false, up = false, down = false;
-	
 	public int score = 0;
-	
-	public int appleX = new Random().nextInt(WIDTH-10);
-	
-	public int appleY = new Random().nextInt(WIDTH-10);
-	
+	public int appleHorizontal = new Random().nextInt(WIDTH-10);
+	public int appleVertical = new Random().nextInt(WIDTH-10);
 	public int speed = 10;
-	
 	public int frameSpeed = 20;
 	
 	public Game() {
@@ -60,9 +54,9 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		}
 		
 		if (new Rectangle(nodeSnake[0].x, nodeSnake[0].y, 10, 10).intersects(new Rectangle(
-				appleX, appleY, 10, 10))) {
-			appleX = new Random().nextInt(WIDTH-10);
-			appleY = new Random().nextInt(WIDTH-10);
+				appleHorizontal, appleVertical, 10, 10))) {
+			appleHorizontal = new Random().nextInt(WIDTH-10);
+			appleVertical = new Random().nextInt(WIDTH-10);
 			score++;
 			frameSpeed++;
 			System.out.println("Score: " + score);
@@ -94,39 +88,39 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	}
 
 	private void render() {
-		BufferStrategy bs = this.getBufferStrategy(); // Definir estrategia de buffer
-		if (bs == null) {
+		BufferStrategy bufferStrategy = this.getBufferStrategy(); // Definir estrategia de buffer
+		if (bufferStrategy == null) {
 			this.createBufferStrategy(3);
 			return;
 		}
-		Graphics graphics = bs.getDrawGraphics(); // Classe responsável por desenhar o jogo
-		graphics.setColor(Color.black);
-		graphics.fillRect(0, 0, WIDTH, HEIGHT);
+		Graphics gameGraphics = bufferStrategy.getDrawGraphics(); // Classe responsável por desenhar o jogo
+		gameGraphics.setColor(Color.black);
+		gameGraphics.fillRect(0, 0, WIDTH, HEIGHT);
 		
 		for (int i = 0; i < nodeSnake.length; i++) {
-			graphics.setColor(Color.magenta);
-			graphics.fillRect(nodeSnake[i].x, nodeSnake[i].y, 10, 10);
+			gameGraphics.setColor(Color.magenta);
+			gameGraphics.fillRect(nodeSnake[i].x, nodeSnake[i].y, 10, 10);
 		}
 		
-		graphics.setColor(Color.red);
-		graphics.fillRect(appleX, appleY, 10, 10);
+		gameGraphics.setColor(Color.red);
+		gameGraphics.fillRect(appleHorizontal, appleVertical, 10, 10);
 		
-		graphics.dispose(); 
-		bs.show();
-		
+		gameGraphics.dispose(); 
+		bufferStrategy.show();
 	}
 
 	public static void main(String[] args) {
-		Game game = new Game();
-		JFrame frame = new JFrame("Snake");
-		frame.add(game);
-		frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Game snakeGame = new Game();
+		JFrame gameFrame = new JFrame("Snake");
 		
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
-		new Thread(game).start();
+		gameFrame.add(snakeGame);
+		gameFrame.setResizable(false);
+		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		gameFrame.pack();
+		gameFrame.setLocationRelativeTo(null);
+		gameFrame.setVisible(true);
+		
+		new Thread(snakeGame).start();
 	}
 	
 	@Override
