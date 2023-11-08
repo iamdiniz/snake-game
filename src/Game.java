@@ -15,7 +15,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	public static final int WIDTH = 480;
 	public static final int HEIGHT = 480;
 	
-	public Node[] nodeSnake = new Node[10]; // Tamanho da cobrinha
+	public SnakeSegment[] snakeSegments = new SnakeSegment[10]; // Tamanho da cobrinha
 	
 	public boolean left = false, right = false, up = false, down = false;
 	public int score = 0;
@@ -26,35 +26,37 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	
 	public Game() {
 		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-		for (int i = 0; i < nodeSnake.length; i++) {
-			nodeSnake[i] = new Node(0, 0);
+		for (int i = 0; i < snakeSegments.length; i++) {
+			snakeSegments[i] = new SnakeSegment(0, 0);
 		}
 		this.addKeyListener(this);
 	}
 
 	private void tick() {
 		
-		for (int i = nodeSnake.length - 1; i > 0; i--) { // É aqui que ela persegue
-			nodeSnake[i].x = nodeSnake[i - 1].x;
-			nodeSnake[i].y = nodeSnake[i - 1].y;
+		for (int i = snakeSegments.length - 1; i > 0; i--) { // É aqui que ela persegue
+			snakeSegments[i].positionHorizontal = snakeSegments[i - 1].positionHorizontal;
+			snakeSegments[i].positionVertical = snakeSegments[i - 1].positionVertical;
 		}
 		
 		if (right) {
-			nodeSnake[0].x+=speed;
+			snakeSegments[0].positionHorizontal+=speed;
 			collision();
 		} else if (up) {
-			nodeSnake[0].y-=speed;
+			snakeSegments[0].positionVertical-=speed;
 			collision();
 		} else if (down) {
-			nodeSnake[0].y+=speed;
+			snakeSegments[0].positionVertical+=speed;
 			collision();
 		} else if (left) {
-			nodeSnake[0].x-=speed;
+			snakeSegments[0].positionHorizontal-=speed;
 			collision();
 		}
 		
-		if (new Rectangle(nodeSnake[0].x, nodeSnake[0].y, 10, 10).intersects(new Rectangle(
-				appleHorizontal, appleVertical, 10, 10))) {
+		if (new Rectangle(snakeSegments[0].positionHorizontal, snakeSegments[0]
+				.positionVertical, 10, 10)
+				.intersects(new Rectangle(appleHorizontal, appleVertical, 10, 10))) {
+			
 			appleHorizontal = new Random().nextInt(WIDTH-10);
 			appleVertical = new Random().nextInt(WIDTH-10);
 			score++;
@@ -65,14 +67,19 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	}
 	
 	private void collision() {
-		for (int i = 0; i < nodeSnake.length; i++) {
+		for (int i = 0; i < snakeSegments.length; i++) {
+			
 			if (i == 0) {
 				continue;
 			}
-			Rectangle box1 = new Rectangle(nodeSnake[0].x, nodeSnake[0].y, 10, 10);
-			Rectangle box2 = new Rectangle(nodeSnake[i].x, nodeSnake[i].y, 10, 10);
 			
-			if (box1.intersects(box2)) {
+			Rectangle snakeHead = new Rectangle(snakeSegments[0]
+					.positionHorizontal, snakeSegments[0].positionVertical, 10, 10);
+			
+			Rectangle snakeBody = new Rectangle(snakeSegments[i]
+					.positionHorizontal, snakeSegments[i].positionVertical, 10, 10);
+			
+			if (snakeHead.intersects(snakeBody)) {
 				System.out.println("Game Over!");
 				frameSpeed = 20;
 				score = 0;
@@ -80,9 +87,11 @@ public class Game extends Canvas implements Runnable, KeyListener {
 				up = false;
 				left = false;
 				down = false;
-				for (int j = 0; j < nodeSnake.length; j++) {
-					nodeSnake[j] = new Node(0, 0);
+				
+				for (int j = 0; j < snakeSegments.length; j++) {
+					snakeSegments[j] = new SnakeSegment(0, 0);
 				}
+				
 			}
 		}
 	}
@@ -97,9 +106,9 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		gameGraphics.setColor(Color.black);
 		gameGraphics.fillRect(0, 0, WIDTH, HEIGHT);
 		
-		for (int i = 0; i < nodeSnake.length; i++) {
+		for (int i = 0; i < snakeSegments.length; i++) {
 			gameGraphics.setColor(Color.magenta);
-			gameGraphics.fillRect(nodeSnake[i].x, nodeSnake[i].y, 10, 10);
+			gameGraphics.fillRect(snakeSegments[i].positionHorizontal, snakeSegments[i].positionVertical, 10, 10);
 		}
 		
 		gameGraphics.setColor(Color.red);
@@ -144,23 +153,23 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+	public void keyPressed(KeyEvent keyBoardClicked) {
+		if (keyBoardClicked.getKeyCode() == KeyEvent.VK_RIGHT) {
 			right = true;
 			left = false;
 			up = false;
 			down = false;
-		} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+		} else if (keyBoardClicked.getKeyCode() == KeyEvent.VK_LEFT) {
 			left = true;
 			right = false;
 			up = false;
 			down = false;
-		} else if (e.getKeyCode() == KeyEvent.VK_UP) {
+		} else if (keyBoardClicked.getKeyCode() == KeyEvent.VK_UP) {
 			up = true;
 			right = false;
 			left = false;
 			down = false;
-		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+		} else if (keyBoardClicked.getKeyCode() == KeyEvent.VK_DOWN) {
 			down = true;
 			up = false;
 			right = false;
